@@ -551,7 +551,10 @@
     const QUIZ_INTERVAL_MS = 2000;
     const COUNTDOWN_SEC = 5;
     const BUSY_TEXT = "同事们都看起来很忙的样子...";
-    const REQUIRED_FRAMES = 5; // Debouncing: need stable recognition across frames.
+    /** 答题阶段开始后先不计入手势，避免误检瞬间判对错、倒计时一闪而过（高帧率 Windows 上更明显） */
+    const ANSWER_GRACE_MS = 1200;
+    /** 同一手势需连续稳定至少这么久才判定（按真实时间，不按帧数） */
+    const MIN_GESTURE_STABLE_MS = 550;
 
     const stageEl = document.getElementById("stage");
     const dialogueCNEl = document.getElementById("dialogueCN");
@@ -603,7 +606,8 @@
     let waitingAnswer = false;
     let detectedGestureLabel = "None";
     let stableGesture = "";
-    let stableFrames = 0;
+    let stableGestureSinceMs = 0;
+    let answerAcceptAfterMs = 0;
     let roundResolved = false;
     let characterEls = {};
     let currentActiveCharKey = null;
@@ -803,24 +807,28 @@
 
     function resetRoundDetector() {
       stableGesture = "";
-      stableFrames = 0;
+      stableGestureSinceMs = 0;
       roundResolved = false;
     }
 
-    function updateStableGesture(label) {
+    function updateStableGesture(label, nowMs) {
       if (!waitingAnswer || roundResolved) return;
-      if (!label || label === "None") {
+      if (nowMs < answerAcceptAfterMs) {
         stableGesture = "";
-        stableFrames = 0;
+        stableGestureSinceMs = 0;
         return;
       }
-      if (label === stableGesture) stableFrames += 1;
-      else {
-        stableGesture = label;
-        stableFrames = 1;
+      if (!label || label === "None") {
+        stableGesture = "";
+        stableGestureSinceMs = 0;
+        return;
       }
-
-      if (stableFrames >= REQUIRED_FRAMES) {
+      if (label !== stableGesture) {
+        stableGesture = label;
+        stableGestureSinceMs = nowMs;
+        return;
+      }
+      if (nowMs - stableGestureSinceMs >= MIN_GESTURE_STABLE_MS) {
         if (label === expecting) resolveRound(true, label);
         else resolveRound(false, label);
       }
@@ -1000,11 +1008,11 @@
         gestureStatusEl.textContent = `当前检测到的手势：${detectedGestureLabel}`;
         gestureDetailEl.textContent =
           `手部状态：${handText} ｜ 关键点：${gestureInfo.points} ｜ 原始分数：${gestureInfo.raw}`;
-        updateStableGesture(detectedGestureLabel);
         drawCameraFrame(landmarks);
       } else {
         drawCameraFrame([]);
       }
+      updateStableGesture(detectedGestureLabel, nowMs);
       detectRafId = requestAnimationFrame(detectionLoop);
     }
 
@@ -1235,6 +1243,7 @@
       expecting = d.targetGesture;
       resetRoundDetector();
       waitingAnswer = true;
+      answerAcceptAfterMs = performance.now() + ANSWER_GRACE_MS;
 
       let left = COUNTDOWN_SEC;
       countdownEl.textContent = `倒计时 ${left}s`;
