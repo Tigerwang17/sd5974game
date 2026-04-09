@@ -670,6 +670,38 @@
       if (!keys.length) throw new Error("character_data.json 没有角色数据");
     }
 
+    function preloadOneImage(url) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        const done = () => resolve();
+        img.onload = () => {
+          if (img.decode) {
+            img.decode().then(done).catch(done);
+          } else {
+            done();
+          }
+        };
+        img.onerror = done;
+        img.src = url;
+      });
+    }
+
+    async function preloadCharacterImages() {
+      try {
+        const keys = Object.keys(CHARACTER_DATA);
+        if (!keys.length) return;
+        const urls = new Set();
+        keys.forEach((k) => {
+          const name = CHARACTER_DATA[k]?.baseImage;
+          if (name) urls.add(`./characters/${name}`);
+        });
+        urls.add("./work.png");
+        await Promise.all([...urls].map(preloadOneImage));
+      } catch (err) {
+        console.warn("Character image preload skipped:", err);
+      }
+    }
+
     function initMetricView() {
       workStackEl.innerHTML = "";
       for (let i = 0; i < START_WORK; i++) {
@@ -1271,7 +1303,7 @@
     async function boot() {
       try {
         await loadCharacterData();
-        const libsOk = await loadGestureLibs();
+        const [libsOk] = await Promise.all([loadGestureLibs(), preloadCharacterImages()]);
         if (!libsOk) return;
         await initGestureRecognizer();
         workLeft = START_WORK;
