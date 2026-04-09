@@ -497,7 +497,7 @@
         <div id="cameraStatus">Camera: initializing...</div>
         <div id="gestureStatus">当前检测到的手势：None</div>
         <div id="gestureDetail">手部状态：- ｜ 关键点：0 ｜ 原始分数：-</div>
-        <div class="build-tag">build: 2026-04-06-r5-local</div>
+        <div class="build-tag">build: 2026-04-06-r5-local · Dongni.Wang</div>
       </div>
     </div>
     <div id="debugPanel">
@@ -514,7 +514,7 @@
         <p>请用Chrome浏览器打开，允许摄像头权限，然后点击开始游戏。</p>
         <p class="start-sub-en">Please use Chrome browser, allow camera access, then tap Start Game.</p>
         <button id="startBtn" class="btn" type="button">开始游戏</button>
-        <button id="ruleBtn" class="btn btn-secondary" type="button">规则说明</button>
+        <button id="ruleBtn" class="btn btn-secondary" type="button">玩法说明</button>
       </div>
     </div>
     <div id="ruleModal" class="hidden">
@@ -1201,7 +1201,7 @@
         workLeft = clamp(workLeft - 1, 0, START_WORK);
         playLaserSfx();
       }
-      else pressure = clamp(pressure + 2, 0, MAX_PRESSURE);
+      else pressure = clamp(pressure + 1, 0, MAX_PRESSURE);
       updateMetrics();
 
       await wait(1500);
