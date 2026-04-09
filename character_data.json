@@ -1,0 +1,170 @@
+
+{
+  "fox": {
+    "chineseName": "胡主任（组长）",
+    "englishName": "Mr. Fox (Team Leader)",
+    "baseImage": "fox.png",
+    "correctAction": "action-bounce",
+    "wrongAction": "action-shake",
+    "dialogues": [
+      { "dialogue": "{playerName},你是高材生，这种‘简单’的小事应该难不倒你吧？", "dialogue_en": "{playerName}, you're the smart one here. A \"simple\" task like this should be easy for you, right?", "targetGesture": "Thumb_Up" },
+      { "dialogue": "想当年我一个人单挑整个项目时，你们还在学校呢。", "dialogue_en": "Back when I was running a whole project solo, you guys were still in school.", "targetGesture": "Thumb_Up" },
+      { "dialogue": "不是我吹，要是没我在这坐镇，这摊子早散了。", "dialogue_en": "Not to brag, but without me holding things down, this place would've fallen apart ages ago.", "targetGesture": "Thumb_Up" },
+      { "dialogue": "我这人最大的缺点就是太负责，凡事非要追求极致。", "dialogue_en": "My biggest flaw? I care too much and always push everything to perfection.", "targetGesture": "Thumb_Up" },
+      { "dialogue": "我昨晚又为了部门的前途失眠了，这就是格局吧。", "dialogue_en": "I couldn't sleep again last night, worrying about this team's future. That's what big-picture thinking looks like.", "targetGesture": "Thumb_Up" },
+      { "dialogue": "老板之所以看重我，就是因为我总能看到你们看不见的高度。", "dialogue_en": "The boss values me because I can see levels you guys can't even see yet.", "targetGesture": "Thumb_Up" },
+      { "dialogue": "其实我有无数个跳槽的机会，留下来纯粹是为了带你们。", "dialogue_en": "Honestly, I've had tons of chances to leave. I stayed just to mentor you all.", "targetGesture": "Thumb_Up" },
+      { "dialogue": "哪怕我只发挥三成实力，也足够解决目前所有的麻烦。", "dialogue_en": "Even at 30% of my power, I can still solve all the problems we have right now.", "targetGesture": "Thumb_Up" },
+      { "dialogue": "在这个行业里，谁不得给我三分薄面？这就是积累。", "dialogue_en": "In this industry, everyone gives me some respect. That's what years of reputation get you.", "targetGesture": "Thumb_Up" },
+      { "dialogue": "{playerName},你今晚有急事吗？没有的话咱们一起把这点活收个尾？", "dialogue_en": "{playerName}, got anything urgent tonight? If not, let's wrap this up together.", "targetGesture": "Open_Palm" },
+      { "dialogue": "{playerName},你是不是还没成家？那正好，帮有家室的同事分担点？", "dialogue_en": "{playerName}, you're not married yet, right? Perfect - can you help cover for coworkers with families?", "targetGesture": "Open_Palm" },
+      { "dialogue": "{playerName},现在是关键时期，你能不能克服一下个人困难，熬一下？", "dialogue_en": "{playerName}, this is a critical phase. Can you put your personal stuff aside and push through?", "targetGesture": "Open_Palm" }
+
+    ]
+  },
+
+  "boss": {
+    "chineseName": "张总（总经理）",
+    "englishName": "Mr. Zhang (leader)",
+    "baseImage": "boss.png",
+    "correctAction": "action-bounce",
+    "wrongAction": "action-shake",
+    "dialogues": [
+      { "dialogue": "现在的年轻人太计较回报，要先看你付出了什么。", "dialogue_en": "Young people these days care too much about returns. First ask yourself what you've contributed.", "targetGesture": "Thumb_Up" },
+      { "dialogue": "我们要做的不是产品，而是一种改变世界的信仰。", "dialogue_en": "We're not just building a product - we're building a belief that can change the world.", "targetGesture": "Thumb_Up" },
+      { "dialogue": "我认为，未来的行业标准将由我们今天来定义。", "dialogue_en": "I believe the standards of this industry tomorrow will be defined by what we do today.", "targetGesture": "Thumb_Up" },
+      { "dialogue": "有时候，我站得太高，确实难免会感到一丝孤独。", "dialogue_en": "Sometimes I stand so high that yeah, it gets a little lonely up here.", "targetGesture": "Thumb_Up" },
+      { "dialogue": "现在的年轻人太计较回报，要先看你付出了什么。", "dialogue_en": "Young people these days care too much about returns. First ask yourself what you've contributed.", "targetGesture": "Thumb_Up" },
+      { "dialogue": "虽然没有加班费，但公司给了你展示的舞台。", "dialogue_en": "Sure, there's no overtime pay, but the company gave you a stage to prove yourself.", "targetGesture": "Thumb_Up" },
+      { "dialogue": "这些年轻人，还是缺乏我当年的那股狼性。", "dialogue_en": "These young folks still don't have that killer instinct we had back in my day.", "targetGesture": "Thumb_Up" },
+      { "dialogue": "有时候，我的一个念头就能决定行业的生死。”", "dialogue_en": "Sometimes one idea from me can decide whether an entire industry lives or dies.", "targetGesture": "Thumb_Up" }
+
+    ]
+  },
+  
+
+
+  "manager": {
+    "chineseName": "李姐（高级经理）",
+    "englishName": "Miss Lee (Manager)",
+    "baseImage": "manager.png",
+    "correctAction": "action-bounce",
+    "wrongAction": "action-shake",
+    "dialogues": [
+      { "dialogue": "{playerName},周末有安排吗？有个挺关键的事，我想来想去只有你能办好。", "dialogue_en": "{playerName}, got plans this weekend? There's something important, and honestly you're the only one I trust to handle it.", "targetGesture": "Open_Palm" },
+      { "dialogue": "{playerName},你周六是在家休息，还是打算去哪儿逛逛？刚好有个小活儿……", "dialogue_en": "{playerName}, chilling at home Saturday or heading out? I just happen to have a small task...", "targetGesture": "Open_Palm" },
+      { "dialogue": "我周末也会在线，你要是碰到什么问题，随时跟我同步。”", "dialogue_en": "I'll be online this weekend too. If anything comes up, just keep me posted anytime.", "targetGesture": "Open_Palm" },
+      { "dialogue": "这周末大家辛苦下，这也是为了你们的个人成长。", "dialogue_en": "Let's all put in some effort this weekend. It's for your personal growth too.", "targetGesture": "Open_Palm" },
+      { "dialogue": "{playerName},在这个赛道，你不拼命，后面有的是人想拼。", "dialogue_en": "{playerName}, in this game, if you don't grind, plenty of people behind you will.", "targetGesture": "Thumb_Up" },
+      { "dialogue": "{playerName},你这个岗位的替代性很高，要学会感恩平台。", "dialogue_en": "{playerName}, your role is highly replaceable. Learn to appreciate the platform you're on.", "targetGesture": "Thumb_Up" },
+      { "dialogue": "现在的年轻人真幸福，像我们当年哪敢准点下班啊。", "dialogue_en": "Young people today have it good. Back in our day, leaving on time wasn't even an option.", "targetGesture": "Thumb_Up" }
+
+    ]
+  },
+
+  "cloud": {
+    "chineseName": "雷仔（同事）",
+    "englishName": "Cloud (colleague)",
+    "baseImage": "cloud.png",
+    "correctAction": "action-bounce",
+    "wrongAction": "action-shake",
+    "dialogues": [
+      { "dialogue": "{playerName},我这有个项目收尾的活，你细心，帮我最后校对一遍？", "dialogue_en": "{playerName}, I've got some project wrap-up work. You're detail-oriented - can you do one final proofread for me?", "targetGesture": "Open_Palm" },
+      { "dialogue": "周末咱们组搞团建，去爬那座没开发的野山，去不去？", "dialogue_en": "The team's doing a weekend outing - hiking that undeveloped wild mountain. You in?", "targetGesture": "Open_Palm" },
+      { "dialogue": "我打算跟领导提个新方案，你帮我写个可行性报告呗？", "dialogue_en": "I'm pitching a new plan to leadership. Can you help me write the feasibility report?", "targetGesture": "Open_Palm" },
+      { "dialogue": "我明天请假，我那几个客户的咨询你顺便帮接一下？", "dialogue_en": "I'm taking leave tomorrow. Can you cover client inquiries for me?", "targetGesture": "Open_Palm" },
+      { "dialogue": "{playerName}，帮我分担点周报的PPT美化，你审美最好了。", "dialogue_en": "{playerName}, can you help polish the weekly report slides? You've got the best taste.", "targetGesture": "Open_Palm" },
+      { "dialogue": "{playerName},你每天走这么准时，看来你的工作量还是太饱和了啊。", "dialogue_en": "{playerName}, you leave right on time every day. Guess your workload still isn't heavy enough, huh?", "targetGesture": "Thumb_Down" },
+      { "dialogue": "{playerName},你这思路不行，跟我比起来还是太嫩了，重写吧。", "dialogue_en": "{playerName}, this approach doesn't work. You're still too green compared to me - rewrite it.", "targetGesture": "Thumb_Down" },
+      { "dialogue": "{playerName},我这可是为了你好才跟你说这些，别不识好歹。", "dialogue_en": "{playerName}, I'm saying this for your own good. Don't be ungrateful.", "targetGesture": "Thumb_Down" },
+      { "dialogue": "这活儿反正你也没做完，干脆加点班把我的也做了？", "dialogue_en": "You haven't finished your own tasks anyway, so why not stay late and do mine too?", "targetGesture": "Thumb_Down" }
+
+    ]
+  },
+
+  "gulu": {
+    "chineseName": "咕噜（同事）",
+    "englishName": "glug (colleague)",
+    "baseImage": "gulu.png",
+    "correctAction": "action-bounce",
+    "wrongAction": "action-shake",
+    "dialogues": [
+      { "dialogue": "你怎么这么开不起玩笑？大家平时都这么说你的。", "dialogue_en": "Why are you so sensitive? Everyone jokes about you like this.", "targetGesture": "Thumb_Down" },
+      { "dialogue": "能帮我是你的福气，多少人想插手我这个项目还没机会呢。", "dialogue_en": "Helping me is your lucky break. Plenty of people want in on my project and don't get the chance.", "targetGesture": "Thumb_Down" },
+      { "dialogue": "这种功劳谁领都一样，大家是一个团队的，你别太计较。", "dialogue_en": "Who gets the credit doesn't matter - we're one team, don't be so picky.", "targetGesture": "Thumb_Down" },
+      { "dialogue": "{playerName},我看你挺闲的，帮我取个外卖不过分吧？", "dialogue_en": "{playerName}, you seem pretty free. Grabbing my takeout isn't too much to ask, right?", "targetGesture": "Thumb_Down" },      
+      { "dialogue": "老板刚才跟我夸你了，我说都是我教得好，你不介意吧？", "dialogue_en": "The boss praised you just now. I told him it's because I trained you well - you don't mind, right?", "targetGesture": "Thumb_Down" },
+      { "dialogue": "大家都这么熟了，透个底，你上个月绩效奖拿了多少？", "dialogue_en": "We're all close here, so spill - how much was your performance bonus last month?", "targetGesture": "Open_Palm" },
+      { "dialogue": "{playerName},你这身行头不便宜吧？看来你工资挺高啊。", "dialogue_en": "{playerName}, that outfit ain't cheap. Looks like you're making good money.", "targetGesture": "Open_Palm" },
+      { "dialogue": "我年终奖才发了这么点，{playerName},你肯定比我多吧？毕竟你是红人。", "dialogue_en": "My year-end bonus was tiny. {playerName}, you definitely got more than me, right? You're the favorite after all.", "targetGesture": "Open_Palm" },
+      { "dialogue": "咱们部门谁的工资最高？我猜是你，毕竟你天天跟领导走得近。", "dialogue_en": "Who gets paid the most in our department? My guess is you, since you're always close to management.", "targetGesture": "Thumb_Down" },
+      { "dialogue": "{playerName},你天天这么晚回家，你对象就没意见？是不是感情出问题了？", "dialogue_en": "{playerName}, you go home this late every day - your partner doesn't complain? Trouble in paradise?", "targetGesture": "Thumb_Down" },
+      { "dialogue": "{playerName},明天大家一起请假抗议新规，你也得签个名啊。", "dialogue_en": "{playerName}, we're all taking leave tomorrow to protest the new policy. You gotta sign too.", "targetGesture": "Open_Palm" },
+      { "dialogue": "{playerName},这事儿咱们先做了再说，不用事事都跟上面报备。", "dialogue_en": "{playerName}, let's just do it first and talk later. No need to report everything upstairs.", "targetGesture": "Open_Palm" }
+
+
+
+    ]
+  },
+
+  "mirror": {
+    "chineseName": "镜宝(同事)",
+    "englishName": "Mirror Baby(colleague)",
+    "baseImage": "mirror.png",
+    "correctAction": "action-bounce",
+    "wrongAction": "action-shake",
+    "dialogues": [
+      { "dialogue": "原本好好的，怎么一交到你手里就出这么多问题？", "dialogue_en": "Everything was fine before - how did it become such a mess once it got to you?", "targetGesture": "Thumb_Down" },
+      { "dialogue": "这些数据都是你给我的，结果错了当然得你负责。", "dialogue_en": "You gave me all this data. If it's wrong, that's on you.", "targetGesture": "Thumb_Down" },
+      { "dialogue": "我只是帮忙打杂，核心逻辑都是你定的，别赖我。", "dialogue_en": "I was just helping out with misc stuff. You set all the core logic - don't pin this on me.", "targetGesture": "Thumb_Down" },
+      { "dialogue": "这种细节你自己不把关，现在出篓子了找我有什么用？", "dialogue_en": "You didn't check the details yourself. Now that it blew up, what do you want from me?", "targetGesture": "Thumb_Down" },      
+      { "dialogue": "这部分不是一直归你管吗？出事了怎么找我？", "dialogue_en": "Hasn't this part always been your responsibility? Why are you coming to me now?", "targetGesture": "Thumb_Down" },
+      { "dialogue": "{playerName}，拉你进个小群，咱们私下吐槽，绝对没领导。", "dialogue_en": "I'll add you to a small private chat so we can vent. No managers in there, promise.", "targetGesture": "" },
+      { "dialogue": "这方案咱们直接发大老板，省得经理又抢功劳。", "dialogue_en": "Let's send this plan straight to the big boss so the manager can't steal the credit again.", "targetGesture": "" },
+      { "dialogue": "{playerName}，你权限高，帮我下个客户名单，我这儿打不开。", "dialogue_en": "You have higher access - can you pull the client list for me? I can't open it here.", "targetGesture": "" },
+      { "dialogue": "听说隔壁组老王和前台那谁……你见过他们吗？", "dialogue_en": "Heard Old Wang from the next team and that front-desk person are a thing... have you seen them?", "targetGesture": "" },
+      { "dialogue": "这项目咱俩私下接了，挂我朋友公司，分你一半。", "dialogue_en": "Let's take this project privately under my friend's company and split it fifty-fifty.", "targetGesture": "" }
+    ]
+  },
+
+  "finance": {
+    "chineseName": "刘大姐（财务）",
+    "englishName": "Mrs.Liu (Finance)",
+    "baseImage": "finance.png",
+    "correctAction": "action-bounce",
+    "wrongAction": "action-shake",
+    "dialogues": [
+      { "dialogue": "你住的那个地段房租挺贵吧，是不是家里给补贴，还是有别的副业？", "dialogue_en": "Rent where you live is pretty high, right? Family helping out, or do you have a side hustle?", "targetGesture": "Open_Palm" },
+      { "dialogue": "我看你手机屏保那个合影，那是你前任吧？长得挺眼熟啊。", "dialogue_en": "I saw that photo on your lock screen - that's your ex, right? Looks kinda familiar.", "targetGesture": "Open_Palm" },
+      { "dialogue": "大家都在传你和隔壁组老王的事，你跟我说说呗？", "dialogue_en": "People are all talking about you and Old Wang from the next team. Come on, tell me what happened.", "targetGesture": "Open_Palm" },
+      { "dialogue": "{playerName}，你这个年纪还不结婚，是不是要求太高？", "dialogue_en": "You're still not married at your age? Are your standards too high?", "targetGesture": "Open_Palm" },      
+      { "dialogue": "{playerName}，你刚才在茶水间哭什么呢？跟大伙说说，让我们安慰一下。", "dialogue_en": "Why were you crying in the pantry just now? Tell everyone so we can comfort you.", "targetGesture": "Open_Palm" },
+      { "dialogue": "别处我不敢说，但在财务这块，我的话就是圣旨。", "dialogue_en": "I can't speak for other teams, but in finance, what I say is final.", "targetGesture": "Thumb_Up" },
+      { "dialogue": "多少高管想在我这儿插队报销，最后都得乖乖排队。", "dialogue_en": "So many executives try to cut the reimbursement line with me, and every single one ends up waiting their turn.", "targetGesture": "Thumb_Up" },
+      { "dialogue": "外面多少猎头想挖我，我留这儿是给老板面子。", "dialogue_en": "Headhunters are always trying to poach me. I'm only staying here out of respect for the boss.", "targetGesture": "Thumb_Up" },
+      { "dialogue": "审计局来人都得客客气气，你那点小事急什么？", "dialogue_en": "Even people from the audit bureau are polite with me. Why are you panicking over such a small thing?", "targetGesture": "Thumb_Up" }
+    ]
+  },
+
+  "legal": {
+    "chineseName": "小杨（法务）",
+    "englishName": "Miss Yang(Legal)",
+    "baseImage": "legal.png",
+    "correctAction": "action-bounce",
+    "wrongAction": "action-shake",
+    "dialogues": [
+      { "dialogue": "合同还没过审，你现在签就是非法违规。", "dialogue_en": "The contract hasn't passed review yet. Signing now would be a legal violation.", "targetGesture": "Thumb_Up" },
+      { "dialogue": "急有用吗？法律风险评估至少需要三个工作日。", "dialogue_en": "Rushing won't help. Legal risk assessment takes at least three business days.", "targetGesture": "Thumb_Up" },
+      { "dialogue": "流程要是能随口略过，还要法务部做什么？", "dialogue_en": "If we could just skip process by saying so, why would the legal team even exist?", "targetGesture": "Thumb_Up" },
+      { "dialogue": "这份协议漏洞百出，拿回去重写，别浪费我时间。", "dialogue_en": "This agreement is full of holes. Take it back, rewrite it, and don't waste my time.", "targetGesture": "Thumb_Up" },      
+      { "dialogue": "按流程提交系统，我这里不接受任何私下委托。", "dialogue_en": "Submit it through the system properly. I don't take any off-the-record requests.", "targetGesture": "Thumb_Up" },
+      { "dialogue": "评估没过就是没过，找谁说情法律条文也不会变。", "dialogue_en": "Failed assessment means failed assessment. No amount of pleading changes the law.", "targetGesture": "Thumb_Up" },
+      { "dialogue": "{playerName}，你效率高，这几页PPT顺手帮我做了吧？", "dialogue_en": "You're fast - can you quickly handle these few PPT pages for me?", "targetGesture": "Open_Palm" },
+      { "dialogue": "{playerName}，这块业务逻辑你最懂，你替我写吧，肯定比我写得好。", "dialogue_en": "You know this business logic best. Write this part for me - you'll do it better than I can.", "targetGesture": "Open_Palm" },
+      { "dialogue": "{playerName}，我今晚约了相亲，剩下的PPT你帮我收个尾？", "dialogue_en": "I've got a blind date tonight. Can you finish the rest of the PPT for me?", "targetGesture": "Open_Palm" },
+      { "dialogue": "{playerName}，我实在搞不定这个软件，你就当教我帮我做了？", "dialogue_en": "I seriously can't figure out this software. Just treat it like teaching me and do it for me?", "targetGesture": "Open_Palm" }
+    ]
+  }
+
+
+}
