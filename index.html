@@ -90,10 +90,12 @@
       height: auto;
       padding: 12px 16px;
       display: flex;
-      flex-direction: column;
-      justify-content: center;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: space-between;
       align-items: center;
-      gap: 8px;
+      gap: 12px 16px;
+      text-align: left;
     }
     h1, h2, p { margin: 0 0 12px; }
     .btn {
@@ -148,21 +150,105 @@
       display: flex;
       justify-content: center;
     }
-    #endMessage {
+
+    #playHintModal {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.65);
+      z-index: 35;
+    }
+    #playHintModal.hidden { display: none !important; }
+    .play-hint-card {
+      position: relative;
+      width: min(92vw, 520px);
+      max-height: 86vh;
+      overflow: auto;
+      padding: 0;
+      border-radius: 14px;
+      background: rgba(11, 18, 34, 0.96);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+    }
+    .play-hint-head {
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px 12px 18px;
+      background: rgba(11, 18, 34, 0.98);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(6px);
+    }
+    .play-hint-close {
+      position: static;
+      flex-shrink: 0;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 0;
+      font-size: 20px;
+      line-height: 1;
+      cursor: pointer;
+      color: #fff;
+      background: rgba(255, 255, 255, 0.16);
+    }
+    .play-hint-close:hover {
+      background: rgba(255, 255, 255, 0.26);
+    }
+    .play-hint-title {
       margin: 0;
-      width: 100%;
+      flex: 1;
+      min-width: 0;
+      font-size: clamp(18px, 2.4vw, 22px);
+      font-weight: 700;
+      line-height: 1.25;
+      color: #cfe6ff;
+      text-align: left;
+    }
+    .play-hint-body {
+      margin: 0;
+      padding: 14px 18px 18px;
+      font-size: clamp(13px, 1.65vw, 15px);
+      line-height: 1.6;
+      white-space: pre-line;
+      color: var(--text);
+      text-align: left;
+    }
+
+    .end-screen-text {
+      flex: 1 1 200px;
+      min-width: 0;
+    }
+    #endMessage {
+      margin: 0 0 4px;
       font-size: clamp(14px, 1.8vw, 20px);
       font-weight: 700;
-      line-height: 1.2;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      line-height: 1.25;
+    }
+    #endMessageEn {
+      margin: 0;
+      font-size: clamp(12px, 1.45vw, 15px);
+      font-weight: 500;
+      line-height: 1.35;
+      opacity: 0.88;
+      color: rgba(238, 244, 255, 0.95);
+    }
+    #endScreen .screen-content .btn {
+      flex: 0 0 auto;
+      align-self: center;
     }
 
     #hud-left {
       position: absolute;
       left: 12px;
-      top: 12px;
+      top: auto;
+      bottom: 12px;
       width: min(22vw, 170px);
       display: flex;
       flex-direction: column;
@@ -175,33 +261,32 @@
       background: var(--panel-bg);
       border: 1px solid var(--panel-border);
     }
-    .metric-title {
-      font-size: 14px;
-      margin-bottom: 8px;
-      opacity: 0.9;
+    .metric-one-line {
+      font-size: 13px;
+      font-weight: 700;
+      margin: 0 0 8px;
+      line-height: 1.35;
+      opacity: 0.95;
     }
     .file-stack {
-      min-height: 170px;
+      min-height: 0;
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      grid-template-rows: repeat(5, auto);
-      column-gap: 0;
-      row-gap: 0;
-      align-items: end;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-rows: repeat(2, auto);
+      column-gap: 2px;
+      row-gap: 2px;
+      align-items: center;
       justify-items: center;
-      padding-top: 2px;
+      padding-top: 0;
     }
-    .file-icon {
-      width: 100%;
-      max-width: 148px;
-      height: 48px;
-      margin-top: -16px;
-      margin-left: -10px;
-      object-fit: contain;
+    .folder-icon {
+      font-size: clamp(13px, 3.4vw, 18px);
+      line-height: 1;
       filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.35));
       transition: opacity 0.25s ease, transform 0.2s ease;
+      user-select: none;
     }
-    .file-icon.off {
+    .folder-icon.off {
       opacity: 0;
       transform: scale(0.86);
     }
@@ -218,27 +303,6 @@
       width: 0%;
       background: linear-gradient(90deg, #ff7d7d, var(--danger));
       transition: width 0.25s ease;
-    }
-    .value {
-      margin-top: 5px;
-      font-size: 13px;
-      opacity: 0.9;
-    }
-    .value.value-bilingual {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 2px;
-      line-height: 1.35;
-    }
-    .value-bilingual .value-cn {
-      font-size: 13px;
-      opacity: 0.95;
-    }
-    .value-bilingual .value-en {
-      font-size: 11px;
-      opacity: 0.78;
-      letter-spacing: 0.02em;
     }
     .gesture-help {
       font-size: 12px;
@@ -451,20 +515,12 @@
   <div id="app">
     <div id="hud-left">
       <div class="metric-box">
-        <div class="metric-title">工作量 Work Load</div>
+        <div id="workLine" class="metric-one-line">工作量work load:10</div>
         <div id="workStack" class="file-stack"></div>
-        <div id="workValue" class="value value-bilingual">
-          <div id="workValueCN" class="value-cn">剩余工作量：10</div>
-          <div id="workValueEN" class="value-en">Remaining work: 10</div>
-        </div>
       </div>
       <div class="metric-box">
-        <div class="metric-title">压力值 Pressure</div>
+        <div id="pressureLine" class="metric-one-line">压力值 Pressure:0</div>
         <div class="pressure-bar"><div id="pressureFill" class="pressure-fill"></div></div>
-        <div id="pressureValue" class="value value-bilingual">
-          <div id="pressureValueCN" class="value-cn">当前压力值：0</div>
-          <div id="pressureValueEN" class="value-en">Current pressure: 0</div>
-        </div>
       </div>
       <div class="metric-box gesture-help">
         <div class="gesture-help-title">手势含义 / Gesture Meaning</div>
@@ -528,10 +584,30 @@
       </div>
     </div>
 
+    <div id="playHintModal" class="hidden">
+      <div class="play-hint-card">
+        <div class="play-hint-head">
+          <h3 class="play-hint-title">玩法说明：</h3>
+          <button id="playHintCloseBtn" class="play-hint-close" type="button" aria-label="关闭">×</button>
+        </div>
+        <div class="play-hint-body">根据同事的对白做出相应的手势。
+正确手势减少工作，错误手势增加压力。工作量清空则胜利，压力值满则失败。
+React to your colleagues' lines with the matching gesture.
+Correct gesture reduce workload; wrong gesture add stress. Clear your workload to win, max out your stress to lose.
+
+- 👍🏻：领导您说的太对了！ Yes boss, you're absolutely right!
+- 👎🏻：你快闭嘴别说了！ Please stop talking right now!
+- 🖐🏻：Sorry 我要去洗手间，下次再聊！Sorry, I need to go to the restroom.</div>
+      </div>
+    </div>
+
     <div id="endScreen" class="screen hidden">
       <div class="screen-content">
-        <p id="endMessage">Game Over，是否再来一局？</p>
-        <button id="restartBtn" class="btn">再来一局</button>
+        <div class="end-screen-text">
+          <p id="endMessage">Game Over，是否再来一局？</p>
+          <p id="endMessageEn"></p>
+        </div>
+        <button id="restartBtn" class="btn" type="button">再来一局</button>
       </div>
     </div>
   </div>
@@ -541,30 +617,40 @@
     const START_WORK = 10;
     const MAX_PRESSURE = 10;
     const QUIZ_INTERVAL_MS = 2000;
-    const COUNTDOWN_SEC = 8;
+    const COUNTDOWN_SEC = 10;
     const BUSY_TEXT = "同事们都看起来很忙的样子...";
     /** 答题阶段开始后先不计入手势，避免误检瞬间判对错、倒计时一闪而过（高帧率 Windows 上更明显） */
     const ANSWER_GRACE_MS = 1200;
     /** 同一手势需连续稳定至少这么久才判定（按真实时间，不按帧数） */
     const MIN_GESTURE_STABLE_MS = 550;
 
+    const VOICE_RIGHT = "./voice/right.mp3";
+    const VOICE_MALE_WRONG = "./voice/male_wrong.mp3";
+    const VOICE_FEMALE_WRONG = "./voice/female_wrong.mp3";
+    const VOICE_VICTORY = "./voice/victory.mp3";
+    const VOICE_FAIL = "./voice/fail.mp3";
+    const VOICE_BGM = "./voice/background.mp3";
+    /** 张总、胡主任、雷仔 → boss / fox / cloud */
+    const MALE_WRONG_CHAR_KEYS = new Set(["boss", "fox", "cloud"]);
+
     const stageEl = document.getElementById("stage");
     const dialogueCNEl = document.getElementById("dialogueCN");
     const dialogueENEl = document.getElementById("dialogueEN");
     const countdownEl = document.getElementById("countdown");
     const workStackEl = document.getElementById("workStack");
-    const workValueCNEl = document.getElementById("workValueCN");
-    const workValueENEl = document.getElementById("workValueEN");
+    const workLineEl = document.getElementById("workLine");
     const pressureFillEl = document.getElementById("pressureFill");
-    const pressureValueCNEl = document.getElementById("pressureValueCN");
-    const pressureValueENEl = document.getElementById("pressureValueEN");
+    const pressureLineEl = document.getElementById("pressureLine");
     const startScreenEl = document.getElementById("startScreen");
     const startBtnEl = document.getElementById("startBtn");
     const ruleBtnEl = document.getElementById("ruleBtn");
     const ruleModalEl = document.getElementById("ruleModal");
     const ruleBackBtnEl = document.getElementById("ruleBackBtn");
+    const playHintModalEl = document.getElementById("playHintModal");
+    const playHintCloseBtnEl = document.getElementById("playHintCloseBtn");
     const endScreenEl = document.getElementById("endScreen");
     const endMessageEl = document.getElementById("endMessage");
+    const endMessageEnEl = document.getElementById("endMessageEn");
     const restartBtnEl = document.getElementById("restartBtn");
     const videoEl = document.getElementById("videoEl");
     const cameraCanvas = document.getElementById("cameraCanvas");
@@ -606,6 +692,7 @@
     let playerName = "小王";
     let cheatBuffer = "";
     let cheatTimer = null;
+    let bgmAudio = null;
 
     async function importWithFallback(urls) {
       let lastErr = null;
@@ -643,6 +730,24 @@
 
     function clamp(num, min, max) { return Math.min(max, Math.max(min, num)); }
     function wait(ms) { return new Promise((resolve) => setTimeout(resolve, ms)); }
+
+    function waitPlayHintModalClose() {
+      return new Promise((resolve) => {
+        const close = () => {
+          playHintModalEl.classList.add("hidden");
+          playHintCloseBtnEl.removeEventListener("click", onCloseClick);
+          playHintModalEl.removeEventListener("click", onBackdrop);
+          resolve();
+        };
+        const onCloseClick = () => close();
+        const onBackdrop = (evt) => {
+          if (evt.target === playHintModalEl) close();
+        };
+        playHintModalEl.classList.remove("hidden");
+        playHintCloseBtnEl.addEventListener("click", onCloseClick);
+        playHintModalEl.addEventListener("click", onBackdrop);
+      });
+    }
     function fillPlayerName(text) {
       return (text || "").replaceAll("{playerName}", playerName || "小王");
     }
@@ -691,7 +796,6 @@
           const name = CHARACTER_DATA[k]?.baseImage;
           if (name) urls.add(`./characters/${name}`);
         });
-        urls.add("./work.png");
         await Promise.all([...urls].map(preloadOneImage));
       } catch (err) {
         console.warn("Character image preload skipped:", err);
@@ -701,10 +805,10 @@
     function initMetricView() {
       workStackEl.innerHTML = "";
       for (let i = 0; i < START_WORK; i++) {
-        const icon = document.createElement("img");
-        icon.className = "file-icon";
-        icon.src = "./work.png";
-        icon.alt = "work";
+        const icon = document.createElement("span");
+        icon.className = "folder-icon";
+        icon.textContent = "📂";
+        icon.setAttribute("aria-hidden", "true");
         workStackEl.appendChild(icon);
       }
       updateMetrics();
@@ -717,10 +821,8 @@
         const isOff = idx < completed;
         el.classList.toggle("off", isOff);
       });
-      workValueCNEl.textContent = `剩余工作量：${workLeft}`;
-      workValueENEl.textContent = `Remaining work: ${workLeft}`;
-      pressureValueCNEl.textContent = `当前压力值：${pressure}`;
-      pressureValueENEl.textContent = `Current pressure: ${pressure}`;
+      workLineEl.textContent = `工作量work load:${workLeft}`;
+      pressureLineEl.textContent = `压力值 Pressure:${pressure}`;
       pressureFillEl.style.width = `${(pressure / MAX_PRESSURE) * 100}%`;
     }
 
@@ -1111,77 +1213,36 @@
       return clamp(Math.floor(maxMs / len), minSpeed, maxSpeed);
     }
 
-    function playBeep(ok) {
-      const Ctx = window.AudioContext || window.webkitAudioContext;
-      if (!Ctx) return;
-      const ac = new Ctx();
-      const osc = ac.createOscillator();
-      const gain = ac.createGain();
-      osc.type = ok ? "triangle" : "square";
-      osc.frequency.value = ok ? 880 : 220;
-      gain.gain.value = 0.04;
-      osc.connect(gain);
-      gain.connect(ac.destination);
-      osc.start();
-      osc.stop(ac.currentTime + 0.16);
+    function playVoiceOnce(src, volume = 0.9) {
+      try {
+        const a = new Audio(src);
+        a.volume = volume;
+        a.play().catch(() => {});
+      } catch (_) {}
     }
 
-    function playLaserSfx() {
-      const Ctx = window.AudioContext || window.webkitAudioContext;
-      if (!Ctx) return;
-      const ac = new Ctx();
-      const osc = ac.createOscillator();
-      const gain = ac.createGain();
-      const filter = ac.createBiquadFilter();
-
-      osc.type = "sawtooth";
-      osc.frequency.setValueAtTime(1300, ac.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(220, ac.currentTime + 0.12);
-
-      filter.type = "highpass";
-      filter.frequency.setValueAtTime(600, ac.currentTime);
-
-      gain.gain.setValueAtTime(0.0001, ac.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.06, ac.currentTime + 0.01);
-      gain.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.16);
-
-      osc.connect(filter);
-      filter.connect(gain);
-      gain.connect(ac.destination);
-      osc.start();
-      osc.stop(ac.currentTime + 0.17);
+    function stopGameBgm() {
+      if (!bgmAudio) return;
+      try {
+        bgmAudio.pause();
+        bgmAudio.currentTime = 0;
+      } catch (_) {}
+      bgmAudio = null;
     }
 
-    function playClapSfx() {
-      const Ctx = window.AudioContext || window.webkitAudioContext;
-      if (!Ctx) return;
-      const ac = new Ctx();
-      const now = ac.currentTime;
+    function startGameBgm() {
+      stopGameBgm();
+      try {
+        bgmAudio = new Audio(VOICE_BGM);
+        bgmAudio.loop = true;
+        bgmAudio.volume = 0.32;
+        bgmAudio.play().catch(() => {});
+      } catch (_) {}
+    }
 
-      // Create 4 short noise bursts to simulate applause claps.
-      for (let i = 0; i < 4; i++) {
-        const start = now + i * 0.08;
-        const duration = 0.04;
-        const bufferSize = Math.floor(ac.sampleRate * duration);
-        const buffer = ac.createBuffer(1, bufferSize, ac.sampleRate);
-        const data = buffer.getChannelData(0);
-        for (let j = 0; j < bufferSize; j++) {
-          data[j] = (Math.random() * 2 - 1) * (1 - j / bufferSize);
-        }
-        const src = ac.createBufferSource();
-        const band = ac.createBiquadFilter();
-        const gain = ac.createGain();
-        src.buffer = buffer;
-        band.type = "bandpass";
-        band.frequency.value = 1800 + i * 250;
-        gain.gain.setValueAtTime(0.0001, start);
-        gain.gain.exponentialRampToValueAtTime(0.1, start + 0.005);
-        gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
-        src.connect(band);
-        band.connect(gain);
-        gain.connect(ac.destination);
-        src.start(start);
-      }
+    function playWrongVoiceForCharacter(charKey) {
+      const src = MALE_WRONG_CHAR_KEYS.has(charKey) ? VOICE_MALE_WRONG : VOICE_FEMALE_WRONG;
+      playVoiceOnce(src, 0.88);
     }
 
     async function resolveRound(isCorrect, byGesture) {
@@ -1195,13 +1256,13 @@
       const cls = isCorrect ? ch.correctAction : ch.wrongAction;
       showReactionEmoji(el, isCorrect, byGesture);
       el.classList.add(cls);
-      playBeep(isCorrect);
-
       if (isCorrect) {
+        playVoiceOnce(VOICE_RIGHT, 0.92);
         workLeft = clamp(workLeft - 1, 0, START_WORK);
-        playLaserSfx();
+      } else {
+        playWrongVoiceForCharacter(currentActiveCharKey);
+        pressure = clamp(pressure + 1, 0, MAX_PRESSURE);
       }
-      else pressure = clamp(pressure + 1, 0, MAX_PRESSURE);
       updateMetrics();
 
       await wait(1500);
@@ -1252,15 +1313,25 @@
     }
 
     function showEnd(isWin) {
+      if (!endScreenEl.classList.contains("hidden")) return;
       gameRunning = false;
       waitingAnswer = false;
+      stopGameBgm();
       endScreenEl.classList.remove("hidden");
       endScreenEl.classList.toggle("win", isWin);
       endScreenEl.classList.toggle("lose", !isWin);
-      if (isWin) playClapSfx();
-      endMessageEl.textContent = isWin
-        ? "Game Win，工作清空啦，恭喜通关！"
-        : "Game Over，压力爆表了，你又加了个通宵，是否再来一局？";
+      if (isWin) playVoiceOnce(VOICE_VICTORY, 0.9);
+      else playVoiceOnce(VOICE_FAIL, 0.9);
+      if (isWin) {
+        endMessageEl.textContent = "Game Win，工作清空啦，恭喜通关！";
+        endMessageEnEl.textContent =
+          "Workload cleared — congratulations, you made it through!";
+      } else {
+        endMessageEl.textContent =
+          "Game Over，压力爆表了，你又加了个通宵，是否再来一局？";
+        endMessageEnEl.textContent =
+          "Stress maxed out — another all-nighter ahead. Play again?";
+      }
     }
 
     function handleCheatInput(evt) {
@@ -1287,9 +1358,12 @@
 
     async function gameLoop() {
       gameRunning = true;
+      startGameBgm();
       while (gameRunning) {
         await walkPhase(QUIZ_INTERVAL_MS);
+        if (!gameRunning) break;
         await oneRound();
+        if (!gameRunning) break;
         if (workLeft <= 0) {
           showEnd(true);
           break;
@@ -1337,7 +1411,8 @@
       renderCharacters();
       dialogueCNEl.textContent = BUSY_TEXT;
       dialogueENEl.textContent = "";
-      gameLoop();
+      await waitPlayHintModalClose();
+      await gameLoop();
     });
     ruleBtnEl.addEventListener("click", () => {
       ruleModalEl.classList.remove("hidden");
@@ -1356,6 +1431,7 @@
       if (detectRafId) cancelAnimationFrame(detectRafId);
       if (walkTimer) clearInterval(walkTimer);
       if (cheatTimer) clearTimeout(cheatTimer);
+      stopGameBgm();
       const tracks = videoEl.srcObject?.getTracks?.() || [];
       tracks.forEach((t) => t.stop());
     });

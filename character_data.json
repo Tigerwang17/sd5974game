@@ -37,7 +37,7 @@
       { "dialogue": "现在的年轻人太计较回报，要先看你付出了什么。", "dialogue_en": "Young people these days care too much about returns. First ask yourself what you've contributed.", "targetGesture": "Thumb_Up" },
       { "dialogue": "虽然没有加班费，但公司给了你展示的舞台。", "dialogue_en": "Sure, there's no overtime pay, but the company gave you a stage to prove yourself.", "targetGesture": "Thumb_Up" },
       { "dialogue": "这些年轻人，还是缺乏我当年的那股狼性。", "dialogue_en": "These young folks still don't have that killer instinct we had back in my day.", "targetGesture": "Thumb_Up" },
-      { "dialogue": "有时候，我的一个念头就能决定行业的生死。”", "dialogue_en": "Sometimes one idea from me can decide whether an entire industry lives or dies.", "targetGesture": "Thumb_Up" }
+      { "dialogue": "有时候，我的一个念头就能决定行业的生死。", "dialogue_en": "Sometimes one idea from me can decide whether an entire industry lives or dies.", "targetGesture": "Thumb_Up" }
 
     ]
   },
