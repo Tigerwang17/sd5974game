@@ -655,10 +655,11 @@
       overflow: hidden;
     }
     #app.mobile-game #cameraPanel {
-      position: absolute;
+      /* 与 #hud-left 同为 fixed，top 由 JS 写入 --mobile-camera-panel-top（手势按钮上缘），无变量时用近似回退 */
+      position: fixed;
       left: max(0px, env(safe-area-inset-left, 0px));
-      top: 50%;
-      transform: translateY(-50%);
+      top: var(--mobile-camera-panel-top, calc(max(6px, env(safe-area-inset-top, 0px)) + 81px));
+      transform: none;
       display: flex;
       flex-direction: column;
       flex: none;
@@ -937,6 +938,7 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
     const workFillEl = document.getElementById("workFill");
     const gestureHelpToggleEl = document.getElementById("gestureHelpToggle");
     const gestureHelpPanelEl = document.getElementById("gestureHelpPanel");
+    const hudLeftEl = document.getElementById("hud-left");
     const ruleImageEl = document.getElementById("ruleImage");
     const startScreenEl = document.getElementById("startScreen");
     const startBtnEl = document.getElementById("startBtn");
@@ -1115,6 +1117,8 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
     }
 
     async function preloadVoices() {
+      // 手机端：blob: + Audio 在 Safari/微信里常无声或被拒，直连 ./voice/*.mp3 更稳
+      if (shouldUseMobileGameLayout()) return;
       await Promise.all(
         VOICE_PRELOAD_LIST.map(async (path) => {
           try {
@@ -1130,7 +1134,16 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
     }
 
     function getVoiceUrl(path) {
+      if (shouldUseMobileGameLayout()) return path;
       return voicePlaybackUrl.get(path) || path;
+    }
+
+    /** 微信内置浏览器：需通过 JSBridge 触发后才易播放 Web 音频 */
+    function primeWechatAudioIfPresent() {
+      if (typeof WeixinJSBridge === "undefined") return;
+      try {
+        WeixinJSBridge.invoke("getNetworkType", {}, () => {});
+      } catch (_) {}
     }
 
     /**
@@ -1138,6 +1151,7 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
      * 经 await / prompt 后再 play 常被静默拒绝（与资源是否已下完无关）。
      */
     function primeHtmlAudioOnUserGesture() {
+      primeWechatAudioIfPresent();
       try {
         const url = getVoiceUrl(VOICE_RIGHT) || VOICE_RIGHT;
         const a = new Audio(url);
@@ -1213,6 +1227,31 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
           ? GESTURE_TOGGLE_LABEL_MOBILE
           : GESTURE_TOGGLE_LABEL_DEFAULT;
       }
+      syncMobileCameraPanelTop();
+    }
+
+    /** 手机端：摄像头条顶部与「查看手势含义」按钮上缘对齐（与 #hud-left 同为 viewport 坐标） */
+    function syncMobileCameraPanelTop() {
+      if (!appEl) return;
+      if (!appEl.classList.contains("mobile-game")) {
+        appEl.style.removeProperty("--mobile-camera-panel-top");
+        return;
+      }
+      if (!gestureHelpToggleEl || !hudLeftEl || !startScreenEl) return;
+      if (!startScreenEl.classList.contains("hidden")) {
+        appEl.style.removeProperty("--mobile-camera-panel-top");
+        return;
+      }
+      if (getComputedStyle(hudLeftEl).display === "none") {
+        appEl.style.removeProperty("--mobile-camera-panel-top");
+        return;
+      }
+      const topPx = gestureHelpToggleEl.getBoundingClientRect().top;
+      if (!Number.isFinite(topPx) || topPx < 1) {
+        appEl.style.removeProperty("--mobile-camera-panel-top");
+        return;
+      }
+      appEl.style.setProperty("--mobile-camera-panel-top", `${Math.round(topPx)}px`);
     }
 
     function renderCharacters() {
@@ -1617,19 +1656,19 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
 
     function playVoiceOnce(src, volume = 0.9) {
       const tryPlay = (url) => {
-        const a = new Audio(url);
-        a.volume = volume;
-        const p = a.play();
-        if (!p) return;
-        p.catch(() => {
-          if (url !== src && String(url).startsWith("blob:")) {
-            tryPlay(src);
-          }
-        });
+        try {
+          const a = new Audio(url);
+          a.volume = volume;
+          const p = a.play();
+          if (!p) return;
+          p.catch(() => {
+            if (url !== src) tryPlay(src);
+          });
+        } catch (_) {
+          if (url !== src) tryPlay(src);
+        }
       };
-      try {
-        tryPlay(getVoiceUrl(src));
-      } catch (_) {}
+      tryPlay(getVoiceUrl(src));
     }
 
     function stopGameBgm() {
@@ -1822,6 +1861,9 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
         }
       }
       startScreenEl.classList.add("hidden");
+      requestAnimationFrame(() => {
+        requestAnimationFrame(syncMobileCameraPanelTop);
+      });
       workLeft = START_WORK;
       pressure = 0;
       updateMetrics();
@@ -1848,6 +1890,7 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
       if (!appEl?.classList.contains("mobile-game")) return;
       const open = gestureHelpPanelEl.classList.toggle("is-open");
       gestureHelpToggleEl.setAttribute("aria-expanded", open ? "true" : "false");
+      requestAnimationFrame(syncMobileCameraPanelTop);
     });
     window.addEventListener("resize", refreshMobileGameLayout);
     window.addEventListener("orientationchange", refreshMobileGameLayout);
@@ -1868,6 +1911,7 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
     });
 
     refreshMobileGameLayout();
+    document.addEventListener("WeixinJSBridgeReady", () => primeWechatAudioIfPresent(), { once: true });
     boot();
   </script>
 </body>
