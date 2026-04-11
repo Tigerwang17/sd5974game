@@ -662,24 +662,39 @@
       display: flex;
       flex-direction: column;
       flex: none;
+      align-items: stretch;
+      justify-content: flex-start;
+      gap: 0;
       width: min(38vw, 220px);
       max-width: calc(100vw - 16px);
+      height: fit-content;
       margin: 0;
       z-index: 20;
       border-radius: 12px;
       overflow: hidden;
       border: 1px solid rgba(255, 255, 255, 0.28);
       box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+      /* 供 .camera-preview 用 cqw 按面板宽度算 4:3 高度，避免 aspect-ratio + max-height 在部分 WebKit 下撑高布局 */
+      container-type: inline-size;
+      container-name: camera-panel;
     }
     /* 缩短预览区高度，下方留给状态文案，避免整块过长 */
     #app.mobile-game #cameraPanel .camera-preview {
       position: relative;
       width: 100%;
       flex: 0 0 auto;
+      min-height: 0;
       max-height: clamp(86px, 24vw, 132px);
       aspect-ratio: 4 / 3;
       overflow: hidden;
       border-radius: 10px 10px 0 0;
+    }
+    @supports (width: 1cqw) {
+      #app.mobile-game #cameraPanel .camera-preview {
+        height: min(75cqw, clamp(86px, 24cqw, 132px));
+        max-height: none;
+        aspect-ratio: unset;
+      }
     }
     #app.mobile-game #cameraPanel .camera-preview #videoEl {
       position: absolute;
@@ -698,6 +713,8 @@
     }
     #app.mobile-game #cameraPanel .camera-info {
       flex: 0 0 auto;
+      flex-grow: 0;
+      min-height: 0;
       font-size: 10px;
       line-height: 1.35;
       padding: 5px 6px 6px;
@@ -1018,6 +1035,8 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
     function waitPlayHintModalClose() {
       return new Promise((resolve) => {
         const close = () => {
+          primeHtmlAudioOnUserGesture();
+          startGameBgm();
           playHintModalEl.classList.add("hidden");
           playHintCloseBtnEl.removeEventListener("click", onCloseClick);
           playHintModalEl.removeEventListener("click", onBackdrop);
@@ -1112,6 +1131,28 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
 
     function getVoiceUrl(path) {
       return voicePlaybackUrl.get(path) || path;
+    }
+
+    /**
+     * iOS Safari / 部分 WebView：Audio.play() 须在用户手势的同步栈里“解锁”，
+     * 经 await / prompt 后再 play 常被静默拒绝（与资源是否已下完无关）。
+     */
+    function primeHtmlAudioOnUserGesture() {
+      try {
+        const url = getVoiceUrl(VOICE_RIGHT) || VOICE_RIGHT;
+        const a = new Audio(url);
+        a.muted = true;
+        a.volume = 0;
+        const p = a.play();
+        if (p) {
+          p.then(() => {
+            try {
+              a.pause();
+              a.currentTime = 0;
+            } catch (_) {}
+          }).catch(() => {});
+        }
+      } catch (_) {}
     }
 
     function revokeVoiceBlobUrls() {
@@ -1575,10 +1616,19 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
     }
 
     function playVoiceOnce(src, volume = 0.9) {
-      try {
-        const a = new Audio(getVoiceUrl(src));
+      const tryPlay = (url) => {
+        const a = new Audio(url);
         a.volume = volume;
-        a.play().catch(() => {});
+        const p = a.play();
+        if (!p) return;
+        p.catch(() => {
+          if (url !== src && String(url).startsWith("blob:")) {
+            tryPlay(src);
+          }
+        });
+      };
+      try {
+        tryPlay(getVoiceUrl(src));
       } catch (_) {}
     }
 
@@ -1719,7 +1769,7 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
 
     async function gameLoop() {
       gameRunning = true;
-      startGameBgm();
+      if (!bgmAudio || bgmAudio.paused) startGameBgm();
       while (gameRunning) {
         await walkPhase(QUIZ_INTERVAL_MS);
         if (!gameRunning) break;
@@ -1760,6 +1810,7 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
     }
 
     startBtnEl.addEventListener("click", async () => {
+      primeHtmlAudioOnUserGesture();
       const inputName = window.prompt("请输入你的名字（可留空）", playerName || "小王");
       if (inputName === null) return;
       playerName = (inputName || "").trim() || "小王";
