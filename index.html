@@ -304,6 +304,40 @@
       background: linear-gradient(90deg, #ff7d7d, var(--danger));
       transition: width 0.25s ease;
     }
+    .work-bar {
+      display: none;
+      width: 100%;
+      height: 16px;
+      border-radius: 99px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .work-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3a8dff, #6b9dff);
+      transition: width 0.25s ease;
+    }
+    .hud-sticky-wrap {
+      display: contents;
+    }
+    .game-main,
+    .game-right {
+      display: contents;
+    }
+    .gesture-help-collapse-btn {
+      display: none;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      background: none;
+      font: inherit;
+      cursor: pointer;
+      color: var(--text);
+      text-align: left;
+    }
     .gesture-help {
       font-size: 12px;
       line-height: 1.45;
@@ -503,6 +537,143 @@
       text-overflow: ellipsis;
     }
 
+    /* 仅当 JS 为 #app 加上 .mobile-game 时生效（手机访问），桌面与宽屏布局不变 */
+    #app.mobile-game {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      overflow: hidden;
+      height: 100dvh;
+      max-height: 100dvh;
+    }
+    #app.mobile-game #hud-left {
+      position: relative;
+      left: auto;
+      top: auto;
+      bottom: auto;
+      width: 100%;
+      max-width: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      flex: 0 0 auto;
+      z-index: 25;
+      padding: 0;
+    }
+    #app.mobile-game .hud-sticky-wrap {
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+      gap: 10px;
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      padding: max(6px, env(safe-area-inset-top, 0px)) 10px 10px;
+      margin: 0;
+      background: rgba(6, 10, 20, 0.94);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    #app.mobile-game .hud-sticky-wrap .metric-box {
+      flex: 1 1 50%;
+      min-width: 0;
+      margin: 0;
+    }
+    #app.mobile-game #workStack {
+      display: none !important;
+    }
+    #app.mobile-game .work-bar {
+      display: block;
+    }
+    #app.mobile-game .gesture-help-collapse-btn {
+      display: block;
+      width: calc(100% - 20px);
+      margin: 8px auto 6px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--panel-border);
+      background: var(--panel-bg);
+      font-size: 13px;
+      font-weight: 700;
+      text-align: center;
+      color: #cfe6ff;
+      touch-action: manipulation;
+    }
+    #app.mobile-game .gesture-help-collapse-btn:active {
+      opacity: 0.92;
+    }
+    #app.mobile-game #gestureHelpPanel.gesture-help:not(.is-open) {
+      display: none !important;
+    }
+    #app.mobile-game #gestureHelpPanel.gesture-help.is-open {
+      display: grid;
+      margin: 0 10px 10px;
+    }
+    #app.mobile-game #gestureHelpPanel .gesture-help-title {
+      display: none;
+    }
+    #app.mobile-game .game-main {
+      display: grid;
+      grid-template-columns: minmax(168px, 36vw) minmax(0, 1fr);
+      grid-template-rows: minmax(0, 1fr);
+      flex: 1 1 auto;
+      min-height: 0;
+      width: 100%;
+      gap: 0;
+    }
+    #app.mobile-game .game-right {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      min-height: 0;
+      overflow: hidden;
+    }
+    #app.mobile-game #cameraPanel {
+      position: relative;
+      left: auto;
+      right: auto;
+      top: auto;
+      bottom: auto;
+      width: 100%;
+      max-width: none;
+      margin: 0;
+      border-radius: 0;
+      border-right: 1px solid rgba(255, 255, 255, 0.2);
+      align-self: stretch;
+    }
+    #app.mobile-game #stage {
+      position: relative;
+      left: auto;
+      top: auto;
+      width: 100%;
+      height: auto;
+      flex: 1 1 auto;
+      min-height: min(42dvh, 320px);
+      max-height: 52dvh;
+      margin: 0;
+      border-radius: 0;
+      border-left: none;
+    }
+    #app.mobile-game #dialogueBox {
+      position: relative;
+      left: auto;
+      transform: none;
+      bottom: auto;
+      width: 100%;
+      max-width: none;
+      margin: 0;
+      border-radius: 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      flex: 0 0 auto;
+    }
+    #app.mobile-game .character.active {
+      --active-scale: 2.05;
+    }
+    #app.mobile-game .character[data-key="legal"].active,
+    #app.mobile-game .character[data-key="finance"].active {
+      --active-scale: 1.75;
+    }
+
     @media (max-width: 920px) {
       #hud-left { width: 33vw; }
       #stage { left: 31%; top: 0; width: 66%; height: 84%; }
@@ -514,15 +685,21 @@
 <body>
   <div id="app">
     <div id="hud-left">
-      <div class="metric-box">
-        <div id="workLine" class="metric-one-line">工作量work load:10</div>
-        <div id="workStack" class="file-stack"></div>
+      <div class="hud-sticky-wrap">
+        <div class="metric-box">
+          <div id="workLine" class="metric-one-line">工作量work load:10</div>
+          <div id="workStack" class="file-stack"></div>
+          <div class="work-bar" aria-hidden="true">
+            <div id="workFill" class="work-fill"></div>
+          </div>
+        </div>
+        <div class="metric-box">
+          <div id="pressureLine" class="metric-one-line">压力值 Pressure:0</div>
+          <div class="pressure-bar"><div id="pressureFill" class="pressure-fill"></div></div>
+        </div>
       </div>
-      <div class="metric-box">
-        <div id="pressureLine" class="metric-one-line">压力值 Pressure:0</div>
-        <div class="pressure-bar"><div id="pressureFill" class="pressure-fill"></div></div>
-      </div>
-      <div class="metric-box gesture-help">
+      <button type="button" id="gestureHelpToggle" class="gesture-help-collapse-btn" aria-expanded="false" aria-controls="gestureHelpPanel">手势含义Gesture Meaning</button>
+      <div class="metric-box gesture-help" id="gestureHelpPanel">
         <div class="gesture-help-title">手势含义 / Gesture Meaning</div>
         <div class="gesture-help-row">
           <span class="gesture-help-emoji">👍🏻</span>领导您说的太对了！<br />
@@ -539,21 +716,24 @@
       </div>
     </div>
 
-    <div id="stage"></div>
-    <div id="dialogueBox">
-      <div id="dialogueCN">同事们都看起来很忙的样子</div>
-      <div id="dialogueEN"></div>
-      <div id="countdown"></div>
-    </div>
-
-    <div id="cameraPanel">
-      <video id="videoEl" autoplay playsinline muted></video>
-      <canvas id="cameraCanvas" width="640" height="480"></canvas>
-      <div class="camera-info">
-        <div id="cameraStatus">Camera: initializing...</div>
-        <div id="gestureStatus">当前检测到的手势：None</div>
-        <div id="gestureDetail">手部状态：- ｜ 关键点：0 ｜ 原始分数：-</div>
-        <div class="build-tag">build: 2026-04-06-r5-local · Dongni.Wang</div>
+    <div id="gameMain" class="game-main">
+      <div id="cameraPanel">
+        <video id="videoEl" autoplay playsinline muted></video>
+        <canvas id="cameraCanvas" width="640" height="480"></canvas>
+        <div class="camera-info">
+          <div id="cameraStatus">Camera: initializing...</div>
+          <div id="gestureStatus">当前检测到的手势：None</div>
+          <div id="gestureDetail">手部状态：- ｜ 关键点：0 ｜ 原始分数：-</div>
+          <div class="build-tag">build: 2026-04-06-r5-local · Dongni.Wang</div>
+        </div>
+      </div>
+      <div id="gameRight" class="game-right">
+        <div id="stage"></div>
+        <div id="dialogueBox">
+          <div id="dialogueCN">同事们都看起来很忙的样子</div>
+          <div id="dialogueEN"></div>
+          <div id="countdown"></div>
+        </div>
       </div>
     </div>
     <div id="debugPanel">
@@ -643,6 +823,7 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
     /** 张总、胡主任、雷仔 → boss / fox / cloud */
     const MALE_WRONG_CHAR_KEYS = new Set(["boss", "fox", "cloud"]);
 
+    const appEl = document.getElementById("app");
     const stageEl = document.getElementById("stage");
     const dialogueCNEl = document.getElementById("dialogueCN");
     const dialogueENEl = document.getElementById("dialogueEN");
@@ -651,6 +832,9 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
     const workLineEl = document.getElementById("workLine");
     const pressureFillEl = document.getElementById("pressureFill");
     const pressureLineEl = document.getElementById("pressureLine");
+    const workFillEl = document.getElementById("workFill");
+    const gestureHelpToggleEl = document.getElementById("gestureHelpToggle");
+    const gestureHelpPanelEl = document.getElementById("gestureHelpPanel");
     const startScreenEl = document.getElementById("startScreen");
     const startBtnEl = document.getElementById("startBtn");
     const ruleBtnEl = document.getElementById("ruleBtn");
@@ -864,6 +1048,27 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
       workLineEl.textContent = `工作量work load:${workLeft}`;
       pressureLineEl.textContent = `压力值 Pressure:${pressure}`;
       pressureFillEl.style.width = `${(pressure / MAX_PRESSURE) * 100}%`;
+      if (workFillEl) workFillEl.style.width = `${(workLeft / START_WORK) * 100}%`;
+    }
+
+    function shouldUseMobileGameLayout() {
+      const ua = navigator.userAgent || "";
+      if (/iPhone|iPod|Android.*Mobile|webOS|BlackBerry|IEMobile|Opera Mini|Mobile\/.*Safari/i.test(ua)) {
+        return true;
+      }
+      if (/iPad|Tablet/i.test(ua) && navigator.maxTouchPoints > 0) return true;
+      if (/HarmonyOS|OpenHarmony/i.test(ua) && navigator.maxTouchPoints > 0) return true;
+      return false;
+    }
+
+    function refreshMobileGameLayout() {
+      if (!appEl) return;
+      const on = shouldUseMobileGameLayout();
+      if (!on) {
+        gestureHelpPanelEl?.classList.remove("is-open");
+        gestureHelpToggleEl?.setAttribute("aria-expanded", "false");
+      }
+      appEl.classList.toggle("mobile-game", on);
     }
 
     function renderCharacters() {
@@ -1483,6 +1688,14 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
 
     restartBtnEl.addEventListener("click", () => window.location.reload());
     window.addEventListener("keydown", handleCheatInput);
+
+    gestureHelpToggleEl?.addEventListener("click", () => {
+      if (!appEl?.classList.contains("mobile-game")) return;
+      const open = gestureHelpPanelEl.classList.toggle("is-open");
+      gestureHelpToggleEl.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+    window.addEventListener("resize", refreshMobileGameLayout);
+    window.addEventListener("orientationchange", refreshMobileGameLayout);
     document.addEventListener("visibilitychange", () => {
       if (document.visibilityState !== "visible" || !cameraReady) return;
       lastVideoTime = -1;
@@ -1499,6 +1712,7 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
       tracks.forEach((t) => t.stop());
     });
 
+    refreshMobileGameLayout();
     boot();
   </script>
 </body>
