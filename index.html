@@ -19,7 +19,7 @@
       width: 100vw;
       height: 100vh;
       overflow: hidden;
-      background: url("./background.jpg") center/cover no-repeat;
+      background: url("./images/background.jpg") center/cover no-repeat;
     }
 
     .screen {
@@ -45,9 +45,9 @@
       opacity: 1;
       z-index: -1;
     }
-    #startScreen::before { background-image: url("./start.jpg"); }
-    #endScreen.win::before { background-image: url("./gamewin.jpg"); }
-    #endScreen.lose::before { background-image: url("./gameover.jpg"); }
+    #startScreen::before { background-image: url("./images/start.jpg"); }
+    #endScreen.win::before { background-image: url("./images/gamewin.jpg"); }
+    #endScreen.lose::before { background-image: url("./images/gameover.jpg"); }
     .hidden { display: none !important; }
 
     .screen-content {
@@ -576,7 +576,7 @@
     <div id="ruleModal" class="hidden">
       <div class="rule-card">
         <div class="rule-image-wrap">
-          <img class="rule-image" src="./rules.jpg" alt="游戏规则" />
+          <img class="rule-image" src="./images/rules.jpg" alt="游戏规则" />
         </div>
         <div class="rule-actions">
           <button id="ruleBackBtn" class="btn btn-secondary" type="button">返回</button>
@@ -630,6 +630,16 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
     const VOICE_VICTORY = "./voice/victory.mp3";
     const VOICE_FAIL = "./voice/fail.mp3";
     const VOICE_BGM = "./voice/background.mp3";
+    /** 启动时预取，播放时用 blob: URL，减少首次播放等待 */
+    const VOICE_PRELOAD_LIST = [
+      VOICE_RIGHT,
+      VOICE_MALE_WRONG,
+      VOICE_FEMALE_WRONG,
+      VOICE_VICTORY,
+      VOICE_FAIL,
+      VOICE_BGM
+    ];
+    const voicePlaybackUrl = new Map();
     /** 张总、胡主任、雷仔 → boss / fox / cloud */
     const MALE_WRONG_CHAR_KEYS = new Set(["boss", "fox", "cloud"]);
 
@@ -672,7 +682,11 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
     let mpGestureRecognizer = null;
     let mpHandLandmarker = null;
     let fp = null;
+    /** 与上一帧识别用的 video.currentTime；新流或可见性恢复时置 -1 强制跑一帧 */
     let lastVideoTime = -1;
+    /** 上次实际跑 MediaPipe 的挂钟时间；currentTime 卡住时用时间兜底，避免识别“假死” */
+    let lastGestureClockMs = 0;
+    const GESTURE_STALL_RECOVER_MS = 220;
     let detectRafId = null;
     let walkTimer = null;
 
@@ -800,6 +814,32 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
       } catch (err) {
         console.warn("Character image preload skipped:", err);
       }
+    }
+
+    async function preloadVoices() {
+      await Promise.all(
+        VOICE_PRELOAD_LIST.map(async (path) => {
+          try {
+            const res = await fetch(path, { cache: "force-cache" });
+            if (!res.ok) return;
+            const blob = await res.blob();
+            voicePlaybackUrl.set(path, URL.createObjectURL(blob));
+          } catch (err) {
+            console.warn("Voice preload skipped:", path, err);
+          }
+        })
+      );
+    }
+
+    function getVoiceUrl(path) {
+      return voicePlaybackUrl.get(path) || path;
+    }
+
+    function revokeVoiceBlobUrls() {
+      voicePlaybackUrl.forEach((u) => {
+        if (typeof u === "string" && u.startsWith("blob:")) URL.revokeObjectURL(u);
+      });
+      voicePlaybackUrl.clear();
     }
 
     function initMetricView() {
@@ -1091,18 +1131,29 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
       }
 
       const nowMs = performance.now();
-      if (videoEl.currentTime !== lastVideoTime) {
-        lastVideoTime = videoEl.currentTime;
-        const gestureResult = gestureRecognizer ? gestureRecognizer.recognizeForVideo(videoEl, nowMs) : null;
-        const handResult = handLandmarker ? handLandmarker.detectForVideo(videoEl, nowMs) : null;
-        const landmarks = handResult?.landmarks?.[0] || gestureResult?.landmarks?.[0] || [];
-        const gestureInfo = estimateGesture(gestureResult, landmarks);
-        detectedGestureLabel = gestureInfo.label;
-        const handText = gestureInfo.handDetected ? "检测到手" : "未检测到手";
-        gestureStatusEl.textContent = `当前检测到的手势：${detectedGestureLabel}`;
-        gestureDetailEl.textContent =
-          `手部状态：${handText} ｜ 关键点：${gestureInfo.points} ｜ 原始分数：${gestureInfo.raw}`;
-        drawCameraFrame(landmarks);
+      const vt = videoEl.currentTime;
+      const videoTimeAdvanced = vt !== lastVideoTime;
+      const videoLooksLive = videoEl.readyState >= 2 && !videoEl.paused && !videoEl.ended;
+      const stalled =
+        videoLooksLive && nowMs - lastGestureClockMs >= GESTURE_STALL_RECOVER_MS;
+      if (videoTimeAdvanced || stalled) {
+        if (videoTimeAdvanced) lastVideoTime = vt;
+        lastGestureClockMs = nowMs;
+        try {
+          const gestureResult = gestureRecognizer ? gestureRecognizer.recognizeForVideo(videoEl, nowMs) : null;
+          const handResult = handLandmarker ? handLandmarker.detectForVideo(videoEl, nowMs) : null;
+          const landmarks = handResult?.landmarks?.[0] || gestureResult?.landmarks?.[0] || [];
+          const gestureInfo = estimateGesture(gestureResult, landmarks);
+          detectedGestureLabel = gestureInfo.label;
+          const handText = gestureInfo.handDetected ? "检测到手" : "未检测到手";
+          gestureStatusEl.textContent = `当前检测到的手势：${detectedGestureLabel}`;
+          gestureDetailEl.textContent =
+            `手部状态：${handText} ｜ 关键点：${gestureInfo.points} ｜ 原始分数：${gestureInfo.raw}`;
+          drawCameraFrame(landmarks);
+        } catch (err) {
+          console.warn("Gesture frame error:", err);
+          drawCameraFrame([]);
+        }
       } else {
         drawCameraFrame([]);
       }
@@ -1146,6 +1197,8 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
           });
         }
         cameraReady = true;
+        lastVideoTime = -1;
+        lastGestureClockMs = 0;
         cameraStatusEl.textContent = "Camera: ready";
         return true;
       } catch (err) {
@@ -1215,7 +1268,7 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
 
     function playVoiceOnce(src, volume = 0.9) {
       try {
-        const a = new Audio(src);
+        const a = new Audio(getVoiceUrl(src));
         a.volume = volume;
         a.play().catch(() => {});
       } catch (_) {}
@@ -1233,7 +1286,7 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
     function startGameBgm() {
       stopGameBgm();
       try {
-        bgmAudio = new Audio(VOICE_BGM);
+        bgmAudio = new Audio(getVoiceUrl(VOICE_BGM));
         bgmAudio.loop = true;
         bgmAudio.volume = 0.32;
         bgmAudio.play().catch(() => {});
@@ -1378,7 +1431,11 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
     async function boot() {
       try {
         await loadCharacterData();
-        const [libsOk] = await Promise.all([loadGestureLibs(), preloadCharacterImages()]);
+        const [libsOk] = await Promise.all([
+          loadGestureLibs(),
+          preloadCharacterImages(),
+          preloadVoices()
+        ]);
         if (!libsOk) return;
         await initGestureRecognizer();
         workLeft = START_WORK;
@@ -1426,12 +1483,18 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
 
     restartBtnEl.addEventListener("click", () => window.location.reload());
     window.addEventListener("keydown", handleCheatInput);
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState !== "visible" || !cameraReady) return;
+      lastVideoTime = -1;
+      lastGestureClockMs = 0;
+    });
 
     window.addEventListener("beforeunload", () => {
       if (detectRafId) cancelAnimationFrame(detectRafId);
       if (walkTimer) clearInterval(walkTimer);
       if (cheatTimer) clearTimeout(cheatTimer);
       stopGameBgm();
+      revokeVoiceBlobUrls();
       const tracks = videoEl.srcObject?.getTracks?.() || [];
       tracks.forEach((t) => t.stop());
     });

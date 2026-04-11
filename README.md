@@ -54,7 +54,7 @@ node server.js
 | 路径 | 说明 |
 |------|------|
 | `index.html` | 游戏主页面（入口） |
-| `background.jpg` / `start.jpg` / `gameover.jpg` / `gamewin.jpg` | 全屏背景与开始、胜负结算图（JPEG，长边约 1920px，兼顾体积与清晰度） |
+| `images/background.jpg` / `images/start.jpg` / `images/gameover.jpg` / `images/gamewin.jpg` / `images/rules.jpg` | 全屏背景、开始页、胜负结算与规则说明图（JPEG，长边约 1920px 等，兼顾体积与清晰度） |
 | `character_data.json` | 角色、对白、目标手势等数据 |
 | `characters/` | 角色立绘等资源 |
 | `vendor/` | MediaPipe WASM、手势相关脚本；`vendor/models/` 为运行时加载的模型文件 |

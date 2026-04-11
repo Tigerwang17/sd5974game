@@ -70,12 +70,11 @@
     "wrongAction": "action-shake",
     "dialogues": [
       { "dialogue": "{playerName},我这有个项目收尾的活，你细心，帮我最后校对一遍？", "dialogue_en": "{playerName}, I've got some project wrap-up work. You're detail-oriented - can you do one final proofread for me?", "targetGesture": "Open_Palm" },
-      { "dialogue": "周末咱们组搞团建，去爬那座没开发的野山，去不去？", "dialogue_en": "The team's doing a weekend outing - hiking that undeveloped wild mountain. You in?", "targetGesture": "Open_Palm" },
       { "dialogue": "我打算跟领导提个新方案，你帮我写个可行性报告呗？", "dialogue_en": "I'm pitching a new plan to leadership. Can you help me write the feasibility report?", "targetGesture": "Open_Palm" },
       { "dialogue": "我明天请假，我那几个客户的咨询你顺便帮接一下？", "dialogue_en": "I'm taking leave tomorrow. Can you cover client inquiries for me?", "targetGesture": "Open_Palm" },
       { "dialogue": "{playerName}，帮我分担点周报的PPT美化，你审美最好了。", "dialogue_en": "{playerName}, can you help polish the weekly report slides? You've got the best taste.", "targetGesture": "Open_Palm" },
-      { "dialogue": "{playerName},你每天走这么准时，看来你的工作量还是太饱和了啊。", "dialogue_en": "{playerName}, you leave right on time every day. Guess your workload still isn't heavy enough, huh?", "targetGesture": "Thumb_Down" },
-      { "dialogue": "{playerName},你这思路不行，跟我比起来还是太嫩了，重写吧。", "dialogue_en": "{playerName}, this approach doesn't work. You're still too green compared to me - rewrite it.", "targetGesture": "Thumb_Down" },
+      { "dialogue": "{playerName},你每天走这么准时，看来你的工作量还是不太饱和吧？", "dialogue_en": "{playerName}, you leave right on time every day. Guess your workload still isn't heavy enough, huh?", "targetGesture": "Thumb_Down" },
+      { "dialogue": "{playerName},你这思路不行，跟我比起来还是太嫩了，重写吧！", "dialogue_en": "{playerName}, this approach doesn't work. You're still too green compared to me - rewrite it.", "targetGesture": "Thumb_Down" },
       { "dialogue": "{playerName},我这可是为了你好才跟你说这些，别不识好歹。", "dialogue_en": "{playerName}, I'm saying this for your own good. Don't be ungrateful.", "targetGesture": "Thumb_Down" },
       { "dialogue": "这活儿反正你也没做完，干脆加点班把我的也做了？", "dialogue_en": "You haven't finished your own tasks anyway, so why not stay late and do mine too?", "targetGesture": "Thumb_Down" }
 
