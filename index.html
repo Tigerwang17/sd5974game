@@ -996,6 +996,12 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
     let cheatBuffer = "";
     let cheatTimer = null;
     let bgmAudio = null;
+    /** 手机端：与 prime 共用一个 Audio，避免每段音效 new Audio() 在 iOS/WebKit 上被静默拒绝 */
+    let sfxChannelAudio = null;
+    let mobileSfxOnEnded = null;
+    let mobileSfxOnError = null;
+    /** 本段手机音效播放期间是否暂停了 BGM，结束时需恢复 */
+    let mobileSfxPausedBgm = false;
 
     async function importWithFallback(urls) {
       let lastErr = null;
@@ -1138,6 +1144,39 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
       return voicePlaybackUrl.get(path) || path;
     }
 
+    function getSfxChannelAudio() {
+      if (!sfxChannelAudio) {
+        sfxChannelAudio = new Audio();
+        sfxChannelAudio.preload = "auto";
+        sfxChannelAudio.setAttribute("playsinline", "");
+      }
+      return sfxChannelAudio;
+    }
+
+    function detachMobileSfxListeners() {
+      const el = sfxChannelAudio;
+      if (!el) return;
+      if (mobileSfxOnEnded) {
+        el.removeEventListener("ended", mobileSfxOnEnded);
+        mobileSfxOnEnded = null;
+      }
+      if (mobileSfxOnError) {
+        el.removeEventListener("error", mobileSfxOnError);
+        mobileSfxOnError = null;
+      }
+    }
+
+    function resumeBgmIfPausedForSfx() {
+      if (!mobileSfxPausedBgm) return;
+      mobileSfxPausedBgm = false;
+      if (bgmAudio) bgmAudio.play().catch(() => {});
+    }
+
+    function clearMobileSfxCycle() {
+      detachMobileSfxListeners();
+      resumeBgmIfPausedForSfx();
+    }
+
     /** 微信内置浏览器：需通过 JSBridge 触发后才易播放 Web 音频 */
     function primeWechatAudioIfPresent() {
       if (typeof WeixinJSBridge === "undefined") return;
@@ -1154,6 +1193,25 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
       primeWechatAudioIfPresent();
       try {
         const url = getVoiceUrl(VOICE_RIGHT) || VOICE_RIGHT;
+        if (shouldUseMobileGameLayout()) {
+          clearMobileSfxCycle();
+          const el = getSfxChannelAudio();
+          el.src = url;
+          el.muted = true;
+          el.volume = 0;
+          el.load();
+          const p = el.play();
+          if (p) {
+            p.then(() => {
+              try {
+                el.pause();
+                el.currentTime = 0;
+                el.muted = false;
+              } catch (_) {}
+            }).catch(() => {});
+          }
+          return;
+        }
         const a = new Audio(url);
         a.muted = true;
         a.volume = 0;
@@ -1661,20 +1719,65 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
     }
 
     function playVoiceOnce(src, volume = 0.9) {
-      const tryPlay = (url) => {
+      const url = getVoiceUrl(src);
+      if (shouldUseMobileGameLayout()) {
+        const el = getSfxChannelAudio();
+        clearMobileSfxCycle();
+        const pauseBgm = !!(bgmAudio && !bgmAudio.paused);
+        if (pauseBgm) {
+          try {
+            bgmAudio.pause();
+          } catch (_) {}
+          mobileSfxPausedBgm = true;
+        }
+        const finish = () => {
+          detachMobileSfxListeners();
+          resumeBgmIfPausedForSfx();
+        };
+        const arm = () => {
+          mobileSfxOnEnded = () => finish();
+          mobileSfxOnError = () => finish();
+          el.addEventListener("ended", mobileSfxOnEnded);
+          el.addEventListener("error", mobileSfxOnError);
+        };
+        const playWith = (u, triedSrc) => {
+          try {
+            el.pause();
+            el.src = u;
+            el.muted = false;
+            el.volume = volume;
+            el.load();
+            arm();
+            const p = el.play();
+            if (p) {
+              p.catch(() => {
+                detachMobileSfxListeners();
+                if (!triedSrc && u !== src) playWith(src, true);
+                else finish();
+              });
+            }
+          } catch (_) {
+            if (!triedSrc && u !== src) playWith(src, true);
+            else finish();
+          }
+        };
+        playWith(url, false);
+        return;
+      }
+      const tryPlay = (u) => {
         try {
-          const a = new Audio(url);
+          const a = new Audio(u);
           a.volume = volume;
           const p = a.play();
           if (!p) return;
           p.catch(() => {
-            if (url !== src) tryPlay(src);
+            if (u !== src) tryPlay(src);
           });
         } catch (_) {
-          if (url !== src) tryPlay(src);
+          if (u !== src) tryPlay(src);
         }
       };
-      tryPlay(getVoiceUrl(src));
+      tryPlay(url);
     }
 
     function stopGameBgm() {
