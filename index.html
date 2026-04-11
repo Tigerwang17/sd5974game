@@ -481,6 +481,10 @@
       border: 1px solid rgba(255, 255, 255, 0.25);
       z-index: 12;
     }
+    .camera-preview {
+      position: relative;
+      width: 100%;
+    }
     #videoEl {
       width: 100%;
       aspect-ratio: 4 / 3;
@@ -489,12 +493,12 @@
       object-fit: cover;
       transform: scaleX(-1); /* mirrored preview */
     }
-    #cameraCanvas {
+    #cameraPanel #cameraCanvas {
       position: absolute;
-      right: 0;
+      left: 0;
       top: 0;
       width: 100%;
-      aspect-ratio: 4 / 3;
+      height: 100%;
       display: block;
       background: transparent;
       pointer-events: none;
@@ -545,6 +549,20 @@
       overflow: hidden;
       height: 100dvh;
       max-height: 100dvh;
+      background-image: url("./images/background_mobile.jpg");
+    }
+    #app.mobile-game #startScreen::before {
+      background-image: url("./images/start_mobile.jpg");
+    }
+    #app.mobile-game #endScreen.win::before {
+      background-image: url("./images/gamewin_mobile.jpg");
+    }
+    #app.mobile-game #endScreen.lose::before {
+      background-image: url("./images/gameover_mobile.jpg");
+    }
+    /* 开始页不展示 HUD（工作量/压力/手势入口），进入游戏后再显示 */
+    #app.mobile-game:has(#startScreen:not(.hidden)) #hud-left {
+      display: none !important;
     }
     #app.mobile-game #hud-left {
       position: relative;
@@ -634,12 +652,53 @@
       right: auto;
       top: auto;
       bottom: auto;
+      display: flex;
+      flex-direction: column;
+      flex: 0 1 auto;
+      align-self: start;
       width: 100%;
       max-width: none;
       margin: 0;
       border-radius: 0;
       border-right: 1px solid rgba(255, 255, 255, 0.2);
-      align-self: stretch;
+    }
+    /* 缩短预览区高度，下方留给状态文案，避免整块过长 */
+    #app.mobile-game #cameraPanel .camera-preview {
+      position: relative;
+      width: 100%;
+      flex: 0 0 auto;
+      max-height: clamp(86px, 24vw, 132px);
+      aspect-ratio: 4 / 3;
+      overflow: hidden;
+      border-radius: 10px 10px 0 0;
+    }
+    #app.mobile-game #cameraPanel .camera-preview #videoEl {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      aspect-ratio: unset;
+      object-fit: cover;
+      transform: scaleX(-1);
+    }
+    #app.mobile-game #cameraPanel .camera-preview #cameraCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+    #app.mobile-game #cameraPanel .camera-info {
+      flex: 0 0 auto;
+      font-size: 10px;
+      line-height: 1.35;
+      padding: 5px 6px 6px;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+    #app.mobile-game #cameraPanel .build-tag {
+      font-size: 9px;
+      margin-top: 2px;
+      line-height: 1.3;
     }
     #app.mobile-game #stage {
       position: relative;
@@ -718,8 +777,10 @@
 
     <div id="gameMain" class="game-main">
       <div id="cameraPanel">
-        <video id="videoEl" autoplay playsinline muted></video>
-        <canvas id="cameraCanvas" width="640" height="480"></canvas>
+        <div class="camera-preview">
+          <video id="videoEl" autoplay playsinline muted></video>
+          <canvas id="cameraCanvas" width="640" height="480"></canvas>
+        </div>
         <div class="camera-info">
           <div id="cameraStatus">Camera: initializing...</div>
           <div id="gestureStatus">当前检测到的手势：None</div>
@@ -756,7 +817,7 @@
     <div id="ruleModal" class="hidden">
       <div class="rule-card">
         <div class="rule-image-wrap">
-          <img class="rule-image" src="./images/rules.jpg" alt="游戏规则" />
+          <img id="ruleImage" class="rule-image" src="./images/rules.jpg" alt="游戏规则" />
         </div>
         <div class="rule-actions">
           <button id="ruleBackBtn" class="btn btn-secondary" type="button">返回</button>
@@ -804,6 +865,19 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
     /** 同一手势需连续稳定至少这么久才判定（按真实时间，不按帧数） */
     const MIN_GESTURE_STABLE_MS = 550;
 
+    const GESTURE_TOGGLE_LABEL_MOBILE = "查看手势含义 View Gesture Meaning";
+    const GESTURE_TOGGLE_LABEL_DEFAULT = "手势含义Gesture Meaning";
+
+    const IMG_RULE_DESKTOP = "./images/rules.jpg";
+    const IMG_RULE_MOBILE = "./images/rules_mobile.jpg";
+    const MOBILE_ART_URLS = [
+      "./images/background_mobile.jpg",
+      "./images/start_mobile.jpg",
+      "./images/rules_mobile.jpg",
+      "./images/gameover_mobile.jpg",
+      "./images/gamewin_mobile.jpg"
+    ];
+
     const VOICE_RIGHT = "./voice/right.mp3";
     const VOICE_MALE_WRONG = "./voice/male_wrong.mp3";
     const VOICE_FEMALE_WRONG = "./voice/female_wrong.mp3";
@@ -835,6 +909,7 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
     const workFillEl = document.getElementById("workFill");
     const gestureHelpToggleEl = document.getElementById("gestureHelpToggle");
     const gestureHelpPanelEl = document.getElementById("gestureHelpPanel");
+    const ruleImageEl = document.getElementById("ruleImage");
     const startScreenEl = document.getElementById("startScreen");
     const startBtnEl = document.getElementById("startBtn");
     const ruleBtnEl = document.getElementById("ruleBtn");
@@ -1000,6 +1075,15 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
       }
     }
 
+    async function preloadMobileArt() {
+      if (!shouldUseMobileGameLayout()) return;
+      try {
+        await Promise.all(MOBILE_ART_URLS.map(preloadOneImage));
+      } catch (err) {
+        console.warn("Mobile art preload skipped:", err);
+      }
+    }
+
     async function preloadVoices() {
       await Promise.all(
         VOICE_PRELOAD_LIST.map(async (path) => {
@@ -1069,6 +1153,14 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
         gestureHelpToggleEl?.setAttribute("aria-expanded", "false");
       }
       appEl.classList.toggle("mobile-game", on);
+      if (ruleImageEl) {
+        ruleImageEl.src = on ? IMG_RULE_MOBILE : IMG_RULE_DESKTOP;
+      }
+      if (gestureHelpToggleEl) {
+        gestureHelpToggleEl.textContent = on
+          ? GESTURE_TOGGLE_LABEL_MOBILE
+          : GESTURE_TOGGLE_LABEL_DEFAULT;
+      }
     }
 
     function renderCharacters() {
@@ -1639,7 +1731,8 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
         const [libsOk] = await Promise.all([
           loadGestureLibs(),
           preloadCharacterImages(),
-          preloadVoices()
+          preloadVoices(),
+          preloadMobileArt()
         ]);
         if (!libsOk) return;
         await initGestureRecognizer();
