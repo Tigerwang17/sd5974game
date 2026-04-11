@@ -655,10 +655,10 @@
       overflow: hidden;
     }
     #app.mobile-game #cameraPanel {
-      /* 与 #hud-left 同为 fixed，top 由 JS 写入 --mobile-camera-panel-top（手势按钮上缘），无变量时用近似回退 */
+      /* 与 #hud-left 同为 fixed，top 由 JS 写入 --mobile-camera-panel-top（手势区下缘 + 间距，避免挡按钮） */
       position: fixed;
       left: max(0px, env(safe-area-inset-left, 0px));
-      top: var(--mobile-camera-panel-top, calc(max(6px, env(safe-area-inset-top, 0px)) + 81px));
+      top: var(--mobile-camera-panel-top, calc(max(6px, env(safe-area-inset-top, 0px)) + 134px));
       transform: none;
       display: flex;
       flex-direction: column;
@@ -1230,7 +1230,7 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
       syncMobileCameraPanelTop();
     }
 
-    /** 手机端：摄像头条顶部与「查看手势含义」按钮上缘对齐（与 #hud-left 同为 viewport 坐标） */
+    /** 手机端：摄像头条顶在手势按钮下缘之下，不挡「查看手势含义」；展开说明时再取面板下缘 */
     function syncMobileCameraPanelTop() {
       if (!appEl) return;
       if (!appEl.classList.contains("mobile-game")) {
@@ -1246,7 +1246,13 @@ Correct gesture reduce workload; wrong gesture add stress. Clear your workload t
         appEl.style.removeProperty("--mobile-camera-panel-top");
         return;
       }
-      const topPx = gestureHelpToggleEl.getBoundingClientRect().top;
+      const gap = 8;
+      const btnBottom = gestureHelpToggleEl.getBoundingClientRect().bottom;
+      let blockBottom = btnBottom;
+      if (gestureHelpPanelEl?.classList.contains("is-open") && getComputedStyle(gestureHelpPanelEl).display !== "none") {
+        blockBottom = Math.max(blockBottom, gestureHelpPanelEl.getBoundingClientRect().bottom);
+      }
+      const topPx = blockBottom + gap;
       if (!Number.isFinite(topPx) || topPx < 1) {
         appEl.style.removeProperty("--mobile-camera-panel-top");
         return;
