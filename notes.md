@@ -17,16 +17,12 @@ Can you withstand this ultimate trial from the “Workplace Demon,” or will yo
 2、玩法说明 How to Play
 获胜条件：在每轮倒计时结束前做出角色要求的正确手势；每答对一次工作量 -1，当工作量降到 0 时游戏胜利。
 失败条件：若在倒计时内手势错误或超时未作答，则压力值 +1；当压力值达到 10 时游戏失败。
-手势含义：
-👍🏻：领导您说的太对了！
-👎🏻：你快闭嘴别说了！
-🖐🏻：Sorry我要去洗手间，下次再聊！
-
 Win Condition: Before the countdown ends in each round, perform the correct gesture required by your role. Each correct answer reduces your Workload by 1. When Workload reaches 0, you win the game.
-
 Lose Condition: If you make the wrong gesture or fail to answer before the countdown ends, your Stress Level increases by 2. When Stress Level reaches 10, you lose the game.
 
-Gesture Meanings:
-👍🏻: “You’re absolutely right, boss!”
-👎🏻: “Would you please just shut up already?!”
-🖐🏻: “Excuse me, I need to go to the restroom. Talk next time!”
+手势含义 Gesture Meaning：
+👍🏻：领导您说的太对了！You’re absolutely right, boss!
+👎🏻：你快闭嘴别说了！Would you please just shut up already
+🖐🏻：Sorry我要去洗手间，下次再聊！Excuse me, I need to go to the restroom.
+
+
